@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🧼 LimpiaYa - Frontend
 
 Plataforma web tipo Uber para conectar clientes con profesionales de servicios de limpieza.  
@@ -22,3 +23,6 @@ Después de clonar el proyecto, asegúrate de instalar las siguientes dependenci
 
 ```bash
 npm install
+=======
+# limpiapp
+>>>>>>> 9063c7a917dfd26b9d8739d7c99689c54c30f026
