@@ -1,12 +1,19 @@
 import React from "react";
-import heroImg from "../assets/hero2.png"
+import heroImg from "../assets/hero2.png";
+import { motion } from "framer-motion";
 
 const Hero: React.FC = () => {
   return (
     <div className="gradient pt-24 relative text-white overflow-hidden">
       <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
-        {/* Texto principal */}
-        <div className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+
+        {/* Texto principal con animación desde la izquierda */}
+        <motion.div
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left"
+        >
           <p className="uppercase tracking-loose w-full text-sm">¿Qué tipo de usuario eres?</p>
           <h1 className="my-4 text-5xl font-bold leading-tight">
             Encuentra servicios de limpieza a domicilio
@@ -17,16 +24,21 @@ const Hero: React.FC = () => {
           <button className="mx-auto lg:mx-0 hover:underline bg-white text-gray-800 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
             Comenzar ahora
           </button>
-        </div>
+        </motion.div>
 
-        {/* Imagen */}
-        <div className="w-full md:w-3/5 py-6 text-center">
+        {/* Imagen con animación desde la derecha */}
+        <motion.div
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="w-full md:w-3/5 py-6 text-center"
+        >
           <img
             className="w-3/4 max-w-lg mx-auto z-50"
             src={heroImg}
             alt="Hero Limpieza"
           />
-        </div>
+        </motion.div>
       </div>
 
       {/* OLA CURVA INFERIOR */}
