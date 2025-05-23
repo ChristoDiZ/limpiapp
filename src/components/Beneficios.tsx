@@ -6,7 +6,8 @@ import eventoImg from "../assets/beneficio-evento2.png";
 const Beneficios: React.FC = () => {
   return (
     <section className="py-20 bg-white">
-      <div className="container mx-auto px-40 space-y-16">
+      <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 space-y-12 sm:space-y-14 md:space-y-16">
+
 
         {/* Título */}
         <h2 className="text-3xl font-bold text-gray-800 text-center md:text-left">

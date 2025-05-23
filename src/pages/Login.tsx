@@ -6,7 +6,7 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Lado izquierdo verde con ola */}
       <div className="relative gradient flex flex-col justify-center items-center text-white p-10">
-        <h2 className="text-4xl font-bold mb-4">LimpiaYa</h2>
+        <h2 className="text-4xl font-bold mb-4">LimpiApp</h2>
         <p className="text-lg max-w-sm text-center">
           La forma más fácil y segura de agendar servicios de limpieza a domicilio o para tu negocio.
         </p>
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
       <div className="flex items-center justify-center bg-white p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Iniciar sesión en LimpiaYa</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Iniciar sesión en LimpiApp</h1>
             <p className="text-sm text-gray-500">Conecta con tu cuenta para agendar o gestionar servicios</p>
           </div>
 

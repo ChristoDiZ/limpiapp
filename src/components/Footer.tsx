@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
 
       {/* Contenido sobre fondo degradado */}
       <div className="gradient text-white text-center px-6 py-12">
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">Gracias por confiar en LimpiaYa</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-4">Gracias por confiar en LimpiApp</h2>
         <p className="text-sm md:text-base mb-6">
           Conectamos hogares y empresas con profesionales de limpieza verificados.
         </p>
@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
           Contáctanos
         </button>
         <p className="text-xs mt-6 text-white/80">
-          © 2025 LimpiaYa. Todos los derechos reservados.
+          © 2025 LimpiApp. Todos los derechos reservados.
         </p>
       </div>
     </footer>
