@@ -1,7 +1,39 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login } = useContext(AuthContext); // ✅ usamos login del contexto
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        login(data.user); // ✅ guarda usuario en el contexto
+        navigate("/perfil");
+      } else {
+        alert(`❌ Error: ${data.msg}`);
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      alert("❌ Error en el servidor");
+    }
+  };
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Lado izquierdo verde con ola */}
@@ -11,7 +43,6 @@ const LoginPage: React.FC = () => {
           La forma más fácil y segura de agendar servicios de limpieza a domicilio o para tu negocio.
         </p>
 
-        {/* Ola decorativa */}
         <svg
           className="absolute right-0 top-0 h-full w-24 md:w-48 text-white"
           viewBox="0 0 100 100"
@@ -22,7 +53,7 @@ const LoginPage: React.FC = () => {
         </svg>
       </div>
 
-      {/* Lado derecho blanco con login */}
+      {/* Lado derecho con formulario */}
       <div className="flex items-center justify-center bg-white p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -30,13 +61,16 @@ const LoginPage: React.FC = () => {
             <p className="text-sm text-gray-500">Conecta con tu cuenta para agendar o gestionar servicios</p>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">Correo electrónico</label>
               <input
                 type="email"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-2 mt-1 border rounded-lg"
                 placeholder="tucorreo@ejemplo.com"
+                required
               />
             </div>
 
@@ -44,29 +78,21 @@ const LoginPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700">Contraseña</label>
               <input
                 type="password"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 mt-1 border rounded-lg"
                 placeholder="********"
+                required
               />
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-teal-600" />
-                Recuérdame
-              </label>
-              <a href="#" className="text-teal-600 hover:underline">Olvidé mi contraseña</a>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-teal-600 text-white py-2 rounded-full font-semibold hover:bg-teal-700 transition"
-            >
+            <button type="submit" className="w-full bg-teal-600 text-white py-2 rounded-full font-semibold hover:bg-teal-700 transition">
               Iniciar sesión
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            ¿Aún no tienes una cuenta?{' '}
+            ¿Aún no tienes una cuenta?{" "}
             <Link to="/register">
               <span className="text-teal-600 hover:underline">Regístrate</span>
             </Link>

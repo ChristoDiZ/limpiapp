@@ -1,16 +1,26 @@
 import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import LoginPage from "./pages/Login"; // asegúrate de la ruta correcta
-import RegisterPage from "./pages/Register"; // asegúrate de la ruta correcta
+import Perfil from "./pages/Perfil";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
+import { useLocation } from "react-router-dom";
 
 function App() {
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/login" || location.pathname === "/register";
+
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-    </Routes>
+    <>
+      {!hideNavbar && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </>
   );
 }
-
 export default App;

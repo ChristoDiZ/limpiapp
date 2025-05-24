@@ -1,7 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const RegisterPage: React.FC = () => {
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.confirmPassword) {
+    alert("Las contraseñas no coinciden ❌");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        firstname: formData.firstname,
+        lastname: formData.lastname,
+        email: formData.email,
+        password: formData.password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem("user", JSON.stringify(data)); // Guarda usuario
+      window.location.href = "/perfil"; // Redirige a la página de perfil
+    } else {
+      alert(`❌ Error: ${data.msg}`);
+    }
+  } catch (error) {
+    console.error("Error al registrar:", error);
+    alert("❌ Error en el servidor");
+  }
+};
+
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
       {/* Lado izquierdo verde con ola */}
@@ -30,55 +78,56 @@ const RegisterPage: React.FC = () => {
             <p className="text-sm text-gray-500">Regístrate para solicitar o realizar servicios de limpieza</p>
           </div>
 
-          <form className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Nombre completo</label>
-              <input
-                type="text"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                placeholder="Tu nombre"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Correo electrónico</label>
-              <input
-                type="email"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                placeholder="correo@ejemplo.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-              <input
-                type="password"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                placeholder="********"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Confirmar contraseña</label>
-              <input
-                type="password"
-                className="w-full px-4 py-2 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                placeholder="********"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-teal-600 text-white py-2 rounded-full font-semibold hover:bg-teal-700 transition"
-            >
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="firstname"
+              placeholder="Nombre"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg"
+              required
+            />
+            <input
+              type="text"
+              name="lastname"
+              placeholder="Apellido"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Correo electrónico"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg"
+              required
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Contraseña"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg"
+              required
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirmar contraseña"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg"
+              required
+            />
+            <button type="submit" className="w-full bg-teal-600 text-white py-2 rounded-full font-semibold">
               Registrarse
             </button>
           </form>
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            ¿Ya tienes una cuenta?{' '}
-            <Link to="/login">
-              <span className="text-teal-600 hover:underline">Inicia sesión</span>
+            ¿Ya tienes una cuenta?{" "}
+            <Link to="/login" className="text-teal-600 hover:underline">
+              Inicia sesión
             </Link>
           </p>
         </div>

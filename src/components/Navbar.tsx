@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaBroom } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav className="gradient fixed w-full z-30 top-0 text-white shadow-lg">
@@ -32,31 +40,55 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Enlaces desktop */}
+        {/* Enlaces en desktop */}
         <div className="hidden lg:flex items-center space-x-6">
-          <a href="#" className="hover:underline hover:text-gray-100 transition">Inicio</a>
-          <a href="#" className="hover:underline hover:text-gray-100 transition">Servicios</a>
-          <a href="#" className="hover:underline hover:text-gray-100 transition">Contacto</a>
+          <Link to="/">Inicio</Link>
+          <Link to="/servicios">Servicios</Link>
+          <Link to="/contacto">Contacto</Link>
 
-          <Link to="/login">
-            <button className="bg-white text-gray-800 font-semibold rounded-full px-6 py-2 shadow-md hover:scale-105 transition duration-300">
-              Iniciar Sesión
-            </button>
-          </Link>
+          {user ? (
+            <>
+              <span className="font-semibold">Hola, {user.firstname}</span>
+              <button
+                onClick={handleLogout}
+                className="bg-white text-gray-800 font-semibold rounded-full px-4 py-1 ml-2"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link to="/login">
+              <button className="bg-white text-gray-800 font-semibold rounded-full px-6 py-2">
+                Iniciar Sesión
+              </button>
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Menú móvil */}
+      {/* Enlaces en móvil */}
       {menuOpen && (
         <div className="lg:hidden px-4 pb-4 space-y-4">
-          <a href="#" className="block text-white hover:underline">Inicio</a>
-          <a href="#" className="block text-white hover:underline">Servicios</a>
-          <a href="#" className="block text-white hover:underline">Contacto</a>
-          <Link to="/login">
-            <button className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2 shadow-md hover:scale-105 transition duration-300">
-              Iniciar Sesión
-            </button>
-          </Link>
+          <Link to="/" className="block text-white hover:underline">Inicio</Link>
+          <Link to="/servicios" className="block text-white hover:underline">Servicios</Link>
+          <Link to="/contacto" className="block text-white hover:underline">Contacto</Link>
+          {user ? (
+            <>
+              <span className="block text-white font-semibold">Hola, {user.firstname}</span>
+              <button
+                onClick={handleLogout}
+                className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <Link to="/login">
+              <button className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2">
+                Iniciar Sesión
+              </button>
+            </Link>
+          )}
         </div>
       )}
     </nav>
