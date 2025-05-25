@@ -4,7 +4,10 @@ import type { LatLngExpression } from "leaflet";
 import { motion } from "framer-motion";
 import "leaflet/dist/leaflet.css";
 
-// Posición inicial: Calama
+interface Props {
+  onNuevaSolicitud: () => void;
+}
+
 const DEFAULT_POSITION: LatLngExpression = [-22.4662, -68.9259];
 
 const MoverMapa = ({ position }: { position: LatLngExpression }) => {
@@ -15,65 +18,64 @@ const MoverMapa = ({ position }: { position: LatLngExpression }) => {
   return null;
 };
 
-// Transición uniforme (como en Beneficios)
 const fadeUpVariant = {
   hidden: { opacity: 0, y: 40 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
 };
 
-const FormularioConMapa: React.FC = () => {
+const FormularioConMapa: React.FC<Props> = ({ onNuevaSolicitud }) => {
   const [direccion, setDireccion] = useState("");
   const [position, setPosition] = useState<LatLngExpression>(DEFAULT_POSITION);
   const [error, setError] = useState("");
   const [tipo, setTipo] = useState("");
-const [fecha, setFecha] = useState("");
-const [hora, setHora] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [hora, setHora] = useState("");
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert("Debes iniciar sesión para agendar un servicio");
-    return;
-  }
-
-  const fechaCompleta = new Date(`${fecha}T${hora}`);
-
-  try {
-    const response = await fetch("http://localhost:5000/api/solicitudes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token
-      },
-      body: JSON.stringify({
-        direccion,
-        coords: { lat: (position as [number, number])[0], lng: (position as [number, number])[1] },
-
-        tipo,
-        fecha: fechaCompleta
-      })
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("✅ Solicitud enviada correctamente");
-      // Limpia campos
-      setDireccion("");
-      setTipo("");
-      setFecha("");
-      setHora("");
-    } else {
-      alert(`❌ Error: ${data.msg}`);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+      return;
     }
-  } catch (err) {
-    console.error("Error al enviar solicitud:", err);
-    alert("❌ Error del servidor");
-  }
-};
+
+    const fechaCompleta = new Date(`${fecha}T${hora}`);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/solicitudes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          direccion,
+          coords: {
+            lat: (position as [number, number])[0],
+            lng: (position as [number, number])[1]
+          },
+          tipo,
+          fecha: fechaCompleta
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("✅ Solicitud enviada correctamente");
+        setDireccion("");
+        setTipo("");
+        setFecha("");
+        setHora("");
+        onNuevaSolicitud(); // ✅ Actualiza lista de solicitudes
+      } else {
+        alert(`❌ Error: ${data.msg}`);
+      }
+    } catch (err) {
+      console.error("Error al enviar solicitud:", err);
+      alert("❌ Error del servidor");
+    }
+  };
 
   useEffect(() => {
     if (direccion.trim() === "") return;
@@ -101,71 +103,67 @@ const handleSubmit = async (e: React.FormEvent) => {
   return (
     <section className="py-16 bg-white text-gray-800">
       <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 flex flex-col md:flex-row items-start justify-between gap-6">
-
-        {/* FORMULARIO con fadeUp */}
         <motion.form
-  onSubmit={handleSubmit}
-  variants={fadeUpVariant}
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true, amount: 0.3 }}
-  className="w-full md:max-w-md space-y-5 bg-white p-6 rounded-xl shadow-md"
->
-  <h2 className="text-3xl font-bold text-gray-800 mb-4">Agenda un servicio</h2>
+          onSubmit={handleSubmit}
+          variants={fadeUpVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          className="w-full md:max-w-md space-y-5 bg-white p-6 rounded-xl shadow-md"
+        >
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">Agenda un servicio</h2>
 
-  <input
-    type="text"
-    placeholder="Ingresa tu dirección..."
-    value={direccion}
-    onChange={(e) => setDireccion(e.target.value)}
-    className="w-full px-4 py-3 border rounded-lg text-sm"
-    required
-  />
-  {error && <p className="text-red-500 text-sm">{error}</p>}
+          <input
+            type="text"
+            placeholder="Ingresa tu dirección..."
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg text-sm"
+            required
+          />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
-  <select
-    value={tipo}
-    onChange={(e) => setTipo(e.target.value)}
-    className="w-full px-4 py-3 border rounded-lg text-sm"
-    required
-  >
-    <option value="" disabled>Selecciona tipo</option>
-    <option value="casa">Casa</option>
-    <option value="departamento">Departamento</option>
-    <option value="oficina">Oficina</option>
-  </select>
+          <select
+            value={tipo}
+            onChange={(e) => setTipo(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg text-sm"
+            required
+          >
+            <option value="" disabled>Selecciona tipo</option>
+            <option value="casa">Casa</option>
+            <option value="departamento">Departamento</option>
+            <option value="oficina">Oficina</option>
+          </select>
 
-  <div className="flex gap-3">
-    <input
-      type="date"
-      value={fecha}
-      onChange={(e) => setFecha(e.target.value)}
-      className="w-1/2 px-4 py-3 border rounded-lg text-sm"
-      required
-    />
-    <input
-      type="time"
-      value={hora}
-      onChange={(e) => setHora(e.target.value)}
-      className="w-1/2 px-4 py-3 border rounded-lg text-sm"
-      required
-    />
-  </div>
+          <div className="flex gap-3">
+            <input
+              type="date"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+              className="w-1/2 px-4 py-3 border rounded-lg text-sm"
+              required
+            />
+            <input
+              type="time"
+              value={hora}
+              onChange={(e) => setHora(e.target.value)}
+              className="w-1/2 px-4 py-3 border rounded-lg text-sm"
+              required
+            />
+          </div>
 
-  <button
-    type="submit"
-    className="w-full bg-teal-600 text-white font-semibold py-3 rounded-lg hover:bg-teal-700 transition"
-  >
-    Enviar solicitud de limpieza
-  </button>
+          <button
+            type="submit"
+            className="w-full bg-teal-600 text-white font-semibold py-3 rounded-lg hover:bg-teal-700 transition"
+          >
+            Enviar solicitud de limpieza
+          </button>
 
-  <p className="text-sm text-center text-gray-500 underline hover:text-gray-700 transition">
-    Inicia sesión para ver tu actividad reciente
-  </p>
-</motion.form>
+          <p className="text-sm text-center text-gray-500 underline hover:text-gray-700 transition">
+            Inicia sesión para ver tu actividad reciente
+          </p>
+        </motion.form>
 
-
-        {/* MAPA con fadeUp */}
         <motion.div
           variants={fadeUpVariant}
           initial="hidden"

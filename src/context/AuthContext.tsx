@@ -16,11 +16,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  const storedUser = localStorage.getItem("user");
+  const storedToken = localStorage.getItem("token");
+
+  if (storedUser && storedToken) {
+    setUser(JSON.parse(storedUser));
+  }
+}, []);
 
   const login = (userData: any) => {
     localStorage.setItem("user", JSON.stringify(userData));
@@ -28,12 +30,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setUser(null); // si usas useState para el usuario
+};
+
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
+
       {children}
     </AuthContext.Provider>
   );

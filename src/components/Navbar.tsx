@@ -1,17 +1,21 @@
 import React, { useContext, useState } from "react";
 import { FaBroom } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
+
+  // Ocultar navbar en login y register
+  if (location.pathname === "/login" || location.pathname === "/register") return null;
 
   return (
     <nav className="gradient fixed w-full z-30 top-0 text-white shadow-lg">
@@ -23,7 +27,7 @@ const Navbar: React.FC = () => {
           <span className="text-2xl md:text-3xl font-bold tracking-wide">LimpiApp</span>
         </div>
 
-        {/* Botón hamburguesa */}
+        {/* Botón hamburguesa (móvil) */}
         <div className="lg:hidden">
           <button
             className="text-white focus:outline-none"
@@ -40,7 +44,7 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Enlaces en desktop */}
+        {/* Enlaces en escritorio */}
         <div className="hidden lg:flex items-center space-x-6">
           <Link to="/">Inicio</Link>
           <Link to="/servicios">Servicios</Link>
@@ -51,14 +55,14 @@ const Navbar: React.FC = () => {
               <span className="font-semibold">Hola, {user.firstname}</span>
               <button
                 onClick={handleLogout}
-                className="bg-white text-gray-800 font-semibold rounded-full px-4 py-1 ml-2"
+                className="bg-white text-gray-800 font-semibold rounded-full px-4 py-1 ml-2 hover:bg-gray-200 transition"
               >
                 Cerrar sesión
               </button>
             </>
           ) : (
             <Link to="/login">
-              <button className="bg-white text-gray-800 font-semibold rounded-full px-6 py-2">
+              <button className="bg-white text-gray-800 font-semibold rounded-full px-6 py-2 hover:bg-gray-200 transition">
                 Iniciar Sesión
               </button>
             </Link>
@@ -77,14 +81,14 @@ const Navbar: React.FC = () => {
               <span className="block text-white font-semibold">Hola, {user.firstname}</span>
               <button
                 onClick={handleLogout}
-                className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2"
+                className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2 hover:bg-gray-200 transition"
               >
                 Cerrar sesión
               </button>
             </>
           ) : (
             <Link to="/login">
-              <button className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2">
+              <button className="w-full bg-white text-gray-800 font-semibold rounded-full px-6 py-2 hover:bg-gray-200 transition">
                 Iniciar Sesión
               </button>
             </Link>

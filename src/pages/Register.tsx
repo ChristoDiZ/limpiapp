@@ -41,7 +41,8 @@ const RegisterPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         window.location.href = selectedRole === "limpiador" ? "/perfil-limpiador" : "/perfil";
       } else {
         alert(`❌ Error: ${data.msg}`);

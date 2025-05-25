@@ -26,6 +26,7 @@ const LoginPage: React.FC = () => {
       if (response.ok) {
         // ✅ Guarda el token en localStorage
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
   
         // ✅ Guarda el usuario en el contexto (como ya tenías)
         login(data.user);

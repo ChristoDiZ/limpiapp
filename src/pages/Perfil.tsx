@@ -1,16 +1,43 @@
-import React, { useEffect, useState } from 'react';
-import FormularioConMapa from "../components/FormularioConMapa"; // ajusta la ruta según tu estructura
-
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import FormularioConMapa from "../components/FormularioConMapa";
+import MisSolicitudes from "../components/MisSolicitudes";
 
 const PerfilPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const [solicitudes, setSolicitudes] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedToken = localStorage.getItem("token");
+
+    if (!storedUser || !storedToken) {
+      navigate("/login");
+      return;
     }
-  }, []);
+
+    setUser(JSON.parse(storedUser));
+    actualizarSolicitudes(); // 🔁 carga inicial
+  }, [navigate]);
+
+  // ✅ función para recargar solicitudes creadas por el usuario
+  const actualizarSolicitudes = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const response = await fetch("http://localhost:5000/api/solicitudes/mis-solicitudes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setSolicitudes(data);
+    } catch (error) {
+      console.error("Error al obtener solicitudes", error);
+    }
+  };
 
   if (!user) return <p>No estás autenticado</p>;
 
@@ -18,8 +45,9 @@ const PerfilPage: React.FC = () => {
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-4">Bienvenido, {user.firstname}</h1>
       <p className="mb-6">Correo: {user.email}</p>
-  
-      <FormularioConMapa />
+
+      <FormularioConMapa onNuevaSolicitud={actualizarSolicitudes} />
+      <MisSolicitudes solicitudes={solicitudes} />
     </div>
   );
 };
