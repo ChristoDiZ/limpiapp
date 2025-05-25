@@ -25,6 +25,55 @@ const FormularioConMapa: React.FC = () => {
   const [direccion, setDireccion] = useState("");
   const [position, setPosition] = useState<LatLngExpression>(DEFAULT_POSITION);
   const [error, setError] = useState("");
+  const [tipo, setTipo] = useState("");
+const [fecha, setFecha] = useState("");
+const [hora, setHora] = useState("");
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Debes iniciar sesión para agendar un servicio");
+    return;
+  }
+
+  const fechaCompleta = new Date(`${fecha}T${hora}`);
+
+  try {
+    const response = await fetch("http://localhost:5000/api/solicitudes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token
+      },
+      body: JSON.stringify({
+        direccion,
+        coords: { lat: (position as [number, number])[0], lng: (position as [number, number])[1] },
+
+        tipo,
+        fecha: fechaCompleta
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("✅ Solicitud enviada correctamente");
+      // Limpia campos
+      setDireccion("");
+      setTipo("");
+      setFecha("");
+      setHora("");
+    } else {
+      alert(`❌ Error: ${data.msg}`);
+    }
+  } catch (err) {
+    console.error("Error al enviar solicitud:", err);
+    alert("❌ Error del servidor");
+  }
+};
 
   useEffect(() => {
     if (direccion.trim() === "") return;
@@ -54,58 +103,67 @@ const FormularioConMapa: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-20 xl:px-40 flex flex-col md:flex-row items-start justify-between gap-6">
 
         {/* FORMULARIO con fadeUp */}
-        <motion.div
-          variants={fadeUpVariant}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          className="w-full md:max-w-md space-y-5 bg-white p-6 rounded-xl shadow-md"
-        >
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Agenda un servicio</h2>
+        <motion.form
+  onSubmit={handleSubmit}
+  variants={fadeUpVariant}
+  initial="hidden"
+  whileInView="visible"
+  viewport={{ once: true, amount: 0.3 }}
+  className="w-full md:max-w-md space-y-5 bg-white p-6 rounded-xl shadow-md"
+>
+  <h2 className="text-3xl font-bold text-gray-800 mb-4">Agenda un servicio</h2>
 
-          <input
-            type="text"
-            placeholder="Ingresa tu dirección..."
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"
-          />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+  <input
+    type="text"
+    placeholder="Ingresa tu dirección..."
+    value={direccion}
+    onChange={(e) => setDireccion(e.target.value)}
+    className="w-full px-4 py-3 border rounded-lg text-sm"
+    required
+  />
+  {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <div className="bg-gray-100 rounded-lg px-4 py-3 text-sm text-gray-700 flex justify-between items-center">
-            <label htmlFor="tipo" className="mr-2 font-medium">Tipo:</label>
-            <select
-              id="tipo"
-              name="tipo"
-              className="bg-transparent focus:outline-none"
-              defaultValue=""
-            >
-              <option value="" disabled>Selecciona</option>
-              <option value="casa">Casa</option>
-              <option value="departamento">Departamento</option>
-              <option value="oficina">Oficina</option>
-            </select>
-          </div>
+  <select
+    value={tipo}
+    onChange={(e) => setTipo(e.target.value)}
+    className="w-full px-4 py-3 border rounded-lg text-sm"
+    required
+  >
+    <option value="" disabled>Selecciona tipo</option>
+    <option value="casa">Casa</option>
+    <option value="departamento">Departamento</option>
+    <option value="oficina">Oficina</option>
+  </select>
 
-          <div className="flex gap-3">
-            <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3 text-sm text-gray-700 w-1/2">
-              <span className="mr-2">📅</span>
-              <input type="date" className="bg-transparent w-full focus:outline-none" />
-            </div>
-            <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3 text-sm text-gray-700 w-1/2">
-              <span className="mr-2">⏰</span>
-              <input type="time" className="bg-transparent w-full focus:outline-none" />
-            </div>
-          </div>
+  <div className="flex gap-3">
+    <input
+      type="date"
+      value={fecha}
+      onChange={(e) => setFecha(e.target.value)}
+      className="w-1/2 px-4 py-3 border rounded-lg text-sm"
+      required
+    />
+    <input
+      type="time"
+      value={hora}
+      onChange={(e) => setHora(e.target.value)}
+      className="w-1/2 px-4 py-3 border rounded-lg text-sm"
+      required
+    />
+  </div>
 
-          <button className="w-full bg-teal-400 text-white text-sm font-semibold py-3 rounded-lg hover:bg-teal-600 transition">
-            Buscar profesionales
-          </button>
+  <button
+    type="submit"
+    className="w-full bg-teal-600 text-white font-semibold py-3 rounded-lg hover:bg-teal-700 transition"
+  >
+    Enviar solicitud de limpieza
+  </button>
 
-          <p className="text-sm text-center text-gray-500 underline hover:text-gray-700 transition">
-            Inicia sesión para ver tu actividad reciente
-          </p>
-        </motion.div>
+  <p className="text-sm text-center text-gray-500 underline hover:text-gray-700 transition">
+    Inicia sesión para ver tu actividad reciente
+  </p>
+</motion.form>
+
 
         {/* MAPA con fadeUp */}
         <motion.div

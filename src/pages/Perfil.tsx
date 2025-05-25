@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import FormularioConMapa from "../components/FormularioConMapa"; // ajusta la ruta según tu estructura
+
 
 const PerfilPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -14,8 +16,10 @@ const PerfilPage: React.FC = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold">Bienvenido, {user.firstname}</h1>
-      <p>Correo: {user.email}</p>
+      <h1 className="text-3xl font-bold mb-4">Bienvenido, {user.firstname}</h1>
+      <p className="mb-6">Correo: {user.email}</p>
+  
+      <FormularioConMapa />
     </div>
   );
 };
