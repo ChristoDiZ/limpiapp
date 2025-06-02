@@ -42,7 +42,7 @@ const FormularioConMapa: React.FC<Props> = ({ onNuevaSolicitud }) => {
     const fechaCompleta = new Date(`${fecha}T${hora}`);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/solicitudes`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/solicitudes`, {
 
         method: "POST",
         headers: {
