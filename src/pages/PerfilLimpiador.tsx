@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+const API=import.meta.env.VITE_API_URL
 
 const PerfilLimpiador: React.FC = () => {
   const [solicitudes, setSolicitudes] = useState<any[]>([]);
@@ -23,7 +24,7 @@ const PerfilLimpiador: React.FC = () => {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/solicitudes`, {
+    fetch(`${API}/api/solicitudes`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (res) => {
@@ -39,7 +40,7 @@ const PerfilLimpiador: React.FC = () => {
         setError(err.message);
       });
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/solicitudes/asignadas`, {
+    fetch(`${API}/api/solicitudes/asignadas`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -49,7 +50,7 @@ const PerfilLimpiador: React.FC = () => {
 
   const tomarSolicitud = async (id: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/solicitudes/${id}/asignar`, {
+      const response = await fetch(`${API}/api/solicitudes/${id}/asignar`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +73,7 @@ const PerfilLimpiador: React.FC = () => {
 
   const completarTarea = async (id: string) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/solicitudes/${id}/completar`, {
+      const response = await fetch(`${API}/api/solicitudes/${id}/completar`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

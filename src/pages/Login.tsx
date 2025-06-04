@@ -2,6 +2,8 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
+const API=import.meta.env.VITE_API_URL
+
 const LoginPage: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<"usuario" | "limpiador" | null>(null);
   const [email, setEmail] = useState("");
@@ -13,7 +15,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
   
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
+      const response = await fetch(`${API}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FormularioConMapa from "../components/FormularioConMapa";
 import MisSolicitudes from "../components/MisSolicitudes";
+const API=import.meta.env.VITE_API_URL
 
 const PerfilPage: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -27,7 +28,7 @@ const PerfilPage: React.FC = () => {
     if (!token) return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/solicitudes/mis-solicitudes", {
+      const response = await fetch(`${API}/api/solicitudes/mis-solicitudes`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
