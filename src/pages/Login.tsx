@@ -47,7 +47,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-      {/* Lado izquierdo verde con ola */}
+      {/* Lado izquierdo verde con olaa */}
       <div className="relative gradient flex flex-col justify-center items-center text-white p-10">
         <h2 className="text-4xl font-bold mb-4">LimpiApp</h2>
         <p className="text-lg max-w-sm text-center">
